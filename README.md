@@ -1,7 +1,7 @@
 # Hardened Web Server — Nginx + firewalld on RHEL 10
 
 This is a lab project I built to get hands-on experience hardening a web server. It's designed to look and feel like something you'd actually see in production, with proper security practices baked in from the start.
-[Alt](Screenshots/Aginx%20Page.PNG)
+![Image Alt](Screenshots/Aginx%20Page.PNG)
 ## What I Built Here
 - Set up a hardened Linux server from scratch on RHEL
 - Locked down the firewall so only what's needed gets through
