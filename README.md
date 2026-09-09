@@ -39,4 +39,4 @@ I wrote `audit.sh` to check that everything's actually configured correctly:
 - No version leaks in headers
 
 ## Screenshots & config files
-See `/Screenshots` & `/Config_Files`folder for verification of each security control.
+See `/Screenshots` & `/Config_Files`folder for verification of all Steps !
