@@ -42,8 +42,8 @@ I wrote a Bash script (`Config_Files/backup.sh`) that handles the heavy lifting:
 - **How it works:** It creates a compressed, timestamped `.tar.gz` archive.
 - **Rotation:** To save space, the script automatically deletes backups older than 7 days.
 - **Scheduling:** I set up a **cron job** to trigger this every day at 2:00 AM.
-![Image Alt](Screenshots/1.PNG)
-![Image Alt](Screenshots/1.5.PNG)
+![Image Alt](Screenshots/backup.PNG)
+![Image Alt](Screenshots/backup-files.PNG)
 ### The "Stress Test" (Disaster Recovery)
 To prove the backups actually worked, I simulated a total system failure:
 1. I deleted the live website files and SSL certificates.
@@ -51,8 +51,8 @@ To prove the backups actually worked, I simulated a total system failure:
 3. I restored everything from the latest archive, correcting the file ownership and SELinux contexts.
 
 **Result:** The site came back online immediately with all data and encryption intact.
-![Image Alt](Screenshots/1.8.PNG)
-![Image Alt](Screenshots/2.PNG)
+![Image Alt](Screenshots/Restore-backups.PNG)
+![Image Alt](Screenshots/Stress-Test.PNG)
 ---
 
 ## ✅ Phase 3: Verification & Auditing
