@@ -37,7 +37,7 @@ I configured `fail2ban` to monitor both SSH and Nginx logs. If any IP fails to a
 Security is pointless if you lose your data. I built a custom automation suite to ensure the system can be restored in minutes.
 
 ### Automated Backup System
-I wrote a Bash script (`scripts/backup.sh`) that handles the heavy lifting:
+I wrote a Bash script (`Config_Files/backup.sh`) that handles the heavy lifting:
 - **What is backed up:** Nginx configs, SSL certificates, website files, and a full `mysqldump` of the MariaDB database.
 - **How it works:** It creates a compressed, timestamped `.tar.gz` archive.
 - **Rotation:** To save space, the script automatically deletes backups older than 7 days.
@@ -56,13 +56,14 @@ To prove the backups actually worked, I simulated a total system failure:
 ---
 
 ## ✅ Phase 3: Verification & Auditing
-I didn't want to guess if the security was working, so I wrote `scripts/audit.sh`. This script automatically checks:
+I didn't want to guess if the security was working, so I wrote `Config_Files/audit.sh`. This script automatically checks:
 - If Nginx, firewalld, and fail2ban are active.
 - If only the approved firewall ports are open.
 - If the SSL certificate is valid.
 - If the Nginx version is successfully hidden.
 
 It outputs a clear **PASS/FAIL** report for every single check.
+![Image Alt](Screenshots/web_test.PNG)
 
 ## 📂 Project Matrial
 You can find the full Matrial of this project in the following folders:
