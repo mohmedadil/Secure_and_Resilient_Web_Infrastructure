@@ -1,4 +1,4 @@
-# Secure & Resilient Web Infrastructure (Nginx, firewalld, MariaDB)
+# Build a Secure & Resilient Web Infrastructure (Nginx, firewalld, MariaDB)
 
 This is a self-directed lab project where I built a production-style web server from the ground up. Instead of just installing software, I focused on the full lifecycle: **Deployment → Hardening → Verification → Backup → Recovery**. 
 
