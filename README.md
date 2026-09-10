@@ -1,42 +1,70 @@
-# Hardened Web Server — Nginx + firewalld on RHEL 10
+# Secure & Resilient Web Infrastructure (Nginx, firewalld, MariaDB)
 
-This is a lab project I built to get hands-on experience hardening a web server. It's designed to look and feel like something you'd actually see in production, with proper security practices baked in from the start.
+This is a self-directed lab project where I built a production-style web server from the ground up. Instead of just installing software, I focused on the full lifecycle: **Deployment → Hardening → Verification → Backup → Recovery**. 
+
+The goal was to practice "defense-in-depth"—making the server difficult to break into and impossible to permanently lose.
+
 ![Image Alt](Screenshots/Aginx%20Page.PNG)
-## What I Built Here
-- Set up a hardened Linux server from scratch on RHEL
-- Locked down the firewall so only what's needed gets through
-- Secured Nginx with proper headers and encryption
-- Added fail2ban to automatically block brute-force attempts
-- Wrote scripts to verify everything's working as intended
 
-## What's Running
+## 🛠 The Stack
 - **OS:** RHEL 10
 - **Web Server:** Nginx
-- **Firewall:** firewalld (configured for least privilege)
-- **SSL:** Self-signed certificate (good enough for a lab)
+- **Database:** MariaDB
+- **Firewall:** firewalld (Least-Privilege)
+- **TLS:** OpenSSL (Self-signed)
 - **Intrusion Prevention:** fail2ban
+- **Automation:** Bash, Cron
 
-## How I Hardened This Thing
+---
 
-### Firewall
-I stripped down firewalld to only allow what's actually needed: SSH, HTTP, HTTPS, and DHCPv6. Got rid of the default stuff that comes pre-enabled like Cockpit and NFS that nobody needs.
+## 🔒 Phase 1: Server Hardening
+I wanted this server to be as invisible as possible to attackers.
 
-### Nginx
-Disabled version headers so the server doesn't advertise what version of Nginx it's running. Added the standard security headers like `X-Frame-Options` and `X-Content-Type-Options`. Also forced HTTPS everywhere — anything coming in on port 80 gets redirected to 443.
+### Firewall Lockdown
+I stripped `firewalld` down to the bare essentials. I removed default services like Cockpit and NFS, leaving only `ssh`, `http`, `https`, and `dhcpv6-client` open.
 
-### SSL/TLS
-Generated a 2048-bit self-signed cert with OpenSSL. Locked it down to TLS 1.2 and 1.3, disabled the weak ciphers.
+### Nginx & Security
+- **Version Hiding:** Disabled `server_tokens` so the server doesn't advertise its version in the headers.
+- **Security Headers:** Added `X-Frame-Options`, `X-Content-Type-Options`, `X-XSS-Protection`, and `CSP` to protect against common web attacks.
+- **Encryption:** Generated a 2048-bit RSA certificate and forced all port 80 traffic to redirect to HTTPS. I locked the server to TLS 1.2 and 1.3, disabling all weak ciphers.
 
-### Fail2ban
-Set it up to watch SSH and Nginx logs. If someone tries to brute-force 5 times in 10 minutes, they get blocked for an hour. Works pretty well for stopping most automated attacks.
+### Brute-Force Protection
+I configured `fail2ban` to monitor both SSH and Nginx logs. If any IP fails to authenticate 5 times within 10 minutes, it gets automatically banned for one hour.
 
-## Verification Script
-I wrote `audit.sh` to check that everything's actually configured correctly:
-- Nginx is running
-- Firewall has the right rules
-- SSL cert is valid
-- Fail2ban is active
-- No version leaks in headers
+---
 
-## Screenshots & config files
-See `/Screenshots` & `/Config_Files`folder for verification of all Steps !
+## 🛡️ Phase 2: Resilience & Recovery
+Security is pointless if you lose your data. I built a custom automation suite to ensure the system can be restored in minutes.
+
+### Automated Backup System
+I wrote a Bash script (`scripts/backup.sh`) that handles the heavy lifting:
+- **What is backed up:** Nginx configs, SSL certificates, website files, and a full `mysqldump` of the MariaDB database.
+- **How it works:** It creates a compressed, timestamped `.tar.gz` archive.
+- **Rotation:** To save space, the script automatically deletes backups older than 7 days.
+- **Scheduling:** I set up a **cron job** to trigger this every day at 2:00 AM.
+![Image Alt](Screenshots/1.PNG)
+![Image Alt](Screenshots/1.5.PNG)
+### The "Stress Test" (Disaster Recovery)
+To prove the backups actually worked, I simulated a total system failure:
+1. I deleted the live website files and SSL certificates.
+2. I dropped the entire MariaDB database.
+3. I restored everything from the latest archive, correcting the file ownership and SELinux contexts.
+
+**Result:** The site came back online immediately with all data and encryption intact.
+![Image Alt](Screenshots/1.8.PNG)
+![Image Alt](Screenshots/2.PNG)
+---
+
+## ✅ Phase 3: Verification & Auditing
+I didn't want to guess if the security was working, so I wrote `scripts/audit.sh`. This script automatically checks:
+- If Nginx, firewalld, and fail2ban are active.
+- If only the approved firewall ports are open.
+- If the SSL certificate is valid.
+- If the Nginx version is successfully hidden.
+
+It outputs a clear **PASS/FAIL** report for every single check.
+
+## 📂 Project Matrial
+You can find the full Matrial of this project in the following folders:
+- `/Screenshots`: Before/after recovery shots and audit results.
+- `/Config_Files`: The actual configuration files used for the hardening.
